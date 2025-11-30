@@ -12,19 +12,19 @@ namespace Api.Controllers;
 [ApiController]
 [Route("[controller]")]
 
-public class CategoriesController(ICategoryRepository repository, IRepository<Category> repo) : ControllerBase
+public class CategoriesController(ICategoryRepository repository) : ControllerBase
 {
     [HttpGet]
     public List<Category> GetAll()
     {
-        return repo.GetAll();
+        return repository.GetAll();
     }
 
 
     [HttpDelete("{id}")]
     public void Delete(int id)
     {
-        repo.Delete(id);
+        repository.Delete(id);
     }
     [HttpPost]
     public int Create(string name)
@@ -33,14 +33,14 @@ public class CategoriesController(ICategoryRepository repository, IRepository<Ca
         {
             Name = name
         };
-        repo.Create(category);
+        repository.Create(category);
         return category.Id;
     }
 
     [HttpGet("{id}")]
     public CategoryDto? Get(int id)
     {
-        var category = repo.Get(id);
+        var category = repository.Get(id);
         var dto = new CategoryDto()
         {
             Id = category.Id,

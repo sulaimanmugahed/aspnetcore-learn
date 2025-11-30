@@ -10,12 +10,12 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CustomerController(ICustomerRepository repository,IRepository<Customer> repo) : ControllerBase
+public class CustomerController(ICustomerRepository repository) : ControllerBase
 {
     [HttpGet]
     public List<CustomerDto> GetAll()
     {
-        var customers = repo.GetAll();
+        var customers = repository.GetAll();
         var dtos = customers.Select(a => new CustomerDto
         {
             Id = a.Id.ToString(),
@@ -54,12 +54,12 @@ public class CustomerController(ICustomerRepository repository,IRepository<Custo
             UserId = dto.UserId
 
         };
-        repo.Create(customer);
+        repository.Create(customer);
     }
     [HttpGet("{id}")]
     public CustomerDto? Get(int id)
     {
-        var customer = repo.Get(id);
+        var customer = repository.Get(id);
         var dto = new CustomerDto()
         {
             Id = customer?.Id.ToString(),

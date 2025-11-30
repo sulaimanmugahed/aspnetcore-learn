@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data;
 
-public class EFCoreCustomerRepository(AppDbContext context) : ICustomerRepository
+public class EFCoreCustomerRepository(AppDbContext context) :EFCoreRepository<Customer>(context), ICustomerRepository
 {
 
 

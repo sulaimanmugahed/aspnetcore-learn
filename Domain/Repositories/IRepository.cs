@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
+using Domain.Entities;
 
 namespace Domain;
 
 public interface IRepository<T>
-where T : class
+where T : Entity
 {
     T? Get(int id);
     void Create(T entity);
     List<T> GetAll();
     void Delete(int id);
+    bool Exist(int id);
 
     Task<List<T>> GetAllAsync();
     Task<T?> GetAsync(int id);

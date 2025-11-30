@@ -3,7 +3,7 @@ using Domain;
 
 namespace Data;
 
-public class EFCoreUserRepository(AppDbContext context) : IUserRepository
+public class EFCoreUserRepository(AppDbContext context) :EFCoreRepository<User>(context), IUserRepository
 {
 
     public bool CheckPassword(int id, string password)

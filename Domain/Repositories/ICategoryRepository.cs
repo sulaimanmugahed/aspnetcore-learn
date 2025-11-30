@@ -1,6 +1,6 @@
 namespace Domain;
 
-public interface ICategoryRepository
+public interface ICategoryRepository:IRepository<Category>
 {
     Category? GetDetail(int id);
 

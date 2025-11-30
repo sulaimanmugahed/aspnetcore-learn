@@ -12,12 +12,12 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BooksController(IBookRepository repository, IRepository<Book> repo) : ControllerBase
+public class BooksController(IBookRepository repository) : ControllerBase
 {
     [HttpGet]
     public List<BookDto> GetAll()
     {
-        var books = repo.GetAll();
+        var books = repository.GetAll();
         var bookDtos = books.Select(book => book.ToDto()).ToList();
         return bookDtos;
     }
@@ -36,7 +36,7 @@ public class BooksController(IBookRepository repository, IRepository<Book> repo)
             }).ToList()
 
         };
-        repo.Create(book);
+        repository.Create(book);
     }
     [HttpPost("buy")]
     public BuyResult Buy(BuyRequest request)
@@ -53,7 +53,7 @@ public class BooksController(IBookRepository repository, IRepository<Book> repo)
     [HttpGet("{id}")]
     public BookDto? Get(int id)
     {
-        var book = repo.Get(id);
+        var book = repository.Get(id);
         return book?.ToDto();
     }
     [HttpGet("{id}/detail")]
@@ -63,6 +63,12 @@ public class BooksController(IBookRepository repository, IRepository<Book> repo)
         var bookDto = book?.ToDetailDto();
         return bookDto;
     }
+    [HttpGet("{id}/exist")]
+    public bool Exist(int id)
+    {
+        return repository.Exist(id);
+    }
+
 
 
 

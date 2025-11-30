@@ -1,6 +1,6 @@
 namespace Domain;
 
-public interface ICustomerRepository
+public interface ICustomerRepository:IRepository<Customer>
 {
 
 

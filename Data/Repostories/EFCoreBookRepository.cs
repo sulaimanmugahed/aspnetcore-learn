@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data;
 
-public class EFCoreBookRepository(AppDbContext context) : IBookRepository
+public class EFCoreBookRepository(AppDbContext context) : EFCoreRepository<Book>(context), IBookRepository
 {
 
 

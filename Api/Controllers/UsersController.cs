@@ -13,12 +13,12 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController(IUserRepository repository, IRepository<User> repo) : ControllerBase
+public class UsersController(IUserRepository repository) : ControllerBase
 {
     [HttpGet]
     public List<UserDto> GetAll()
     {
-        var user = repo.GetAll();
+        var user = repository.GetAll();
         var dto = user.Select(user => user.ToDto()).ToList();
 
         return dto;
@@ -28,7 +28,7 @@ public class UsersController(IUserRepository repository, IRepository<User> repo)
     [HttpGet("{id}")]
     public UserDto? Get(int id)
     {
-        var user = repo.Get(id);
+        var user = repository.Get(id);
         var dto = user?.ToDto();
         return dto;
 
@@ -42,7 +42,7 @@ public class UsersController(IUserRepository repository, IRepository<User> repo)
             UserName = dto.UserName
 
         };
-        repo.Create(user);
+        repository.Create(user);
 
     }
 

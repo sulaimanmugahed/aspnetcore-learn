@@ -6,9 +6,8 @@ using Domain.Entities;
 
 namespace Domain;
 
-public class Author
+public class Author : Entity
 {
-       public int Id { get; set; }
        public string Name { get; set; }
        public Author(int id, string name)
        {

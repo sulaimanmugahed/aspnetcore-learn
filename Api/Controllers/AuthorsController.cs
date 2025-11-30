@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Api.Dtos;
 using Api.Extensions;
 using Domain;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -16,14 +17,14 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthorsController(IAuthorRepository repository,IRepository<Author> repo) : ControllerBase
+public class AuthorsController(IAuthorRepository repository) : ControllerBase
 {
 
     [HttpGet]
     public async Task<List<AuthorDto>> GetAll()
     {
 
-        var authors = await repo.GetAllAsync();
+        var authors = await repository.GetAllAsync();
         var authorDtos = authors.Select(a => new AuthorDto
         {
             Id = a.Id,
@@ -36,20 +37,20 @@ public class AuthorsController(IAuthorRepository repository,IRepository<Author> 
     public async Task Create(CreateAuthorDto dto)
     {
         var author = new Author(dto.Name);
-        await repo.CreateAsync(author);
+        await repository.CreateAsync(author);
     }
 
     [HttpDelete]
     public async Task Delete(int id)
     {
-        await repo.DeleteAsync(id);
+        await repository.DeleteAsync(id);
 
     }
     [HttpGet("{id}")]
     public async Task<AuthorDto?> GetAuthor(int id)
     {
 
-        var author = await repo.GetAsync(id);
+        var author = await repository.GetAsync(id);
         var dto = new AuthorDto
         {
             Id = author.Id,

@@ -8,7 +8,7 @@ using Domain.Entities;
 namespace Domain;
 
 
-public class Book : IHasQuantity
+public class Book : Entity, IHasQuantity
 {
 
     public Book()
@@ -24,7 +24,6 @@ public class Book : IHasQuantity
         Quantity = quantity;
     }
 
-    public int Id { get; set; }
     public string Name { get; set; }
     public int Price { get; set; }
     public int Quantity { get; set; }

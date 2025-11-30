@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
+using Domain.Entities;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace Data;
 
 
 public class EFCoreRepository<T>(AppDbContext context) : IRepository<T>
-where T : class
+where T : Entity
 {
     public void Create(T entity)
     {
@@ -47,6 +48,17 @@ where T : class
             await context.SaveChangesAsync();
 
         }
+    }
+
+    public bool Exist(int id)
+    {
+        var existEntity = context.Set<T>().Find(id);
+
+        if (existEntity is not null)
+        {
+            return true;
+        }
+        return false;
     }
 
     public T? Get(int id)
