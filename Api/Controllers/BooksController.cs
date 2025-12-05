@@ -4,15 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos;
 using Api.Extensions;
+using Api.Settings;
 using Domain;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BooksController(IBookRepository repository) : ControllerBase
+public class BooksController(IBookRepository repository, IOptions<BuyBookSettings> options) : ControllerBase
 {
     [HttpGet]
     public List<BookDto> GetAll()
@@ -24,6 +26,7 @@ public class BooksController(IBookRepository repository) : ControllerBase
     [HttpPost]
     public void Create(CreateBookDto request)
     {
+
         var book = new Book
         {
             Name = request.Name,
@@ -41,6 +44,10 @@ public class BooksController(IBookRepository repository) : ControllerBase
     [HttpPost("buy")]
     public BuyResult Buy(BuyRequest request)
     {
+        if (options.Value.MaxQuantity < request.Quantity)
+        {
+            throw new Exception("aa");
+        }
         return repository.Buy(request.CustomerId, request.BookId, request.Quantity);
     }
 

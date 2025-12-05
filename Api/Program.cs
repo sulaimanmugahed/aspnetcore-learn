@@ -1,10 +1,12 @@
+using Api.Settings;
 using Data;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder();
-builder.Services.AddScoped(typeof(IRepository<>),typeof(EFCoreRepository<>));
+builder.Services.AddScoped(typeof(IRepository<>), typeof(EFCoreRepository<>));
+IConfiguration configuration = builder.Configuration;
 
 
 
@@ -16,15 +18,34 @@ builder.Services.AddScoped<IUserRepository, EFCoreUserRepository>();
 
 
 
-
 builder.Services.AddOpenApi();
-builder.Services.AddControllers().AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    }); ;
+builder.Services.AddControllers();
 
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Basic17NovDatabase2;Trusted_Connection=True;"));
+builder.Services
+.AddDbContext<AppDbContext>(options =>
+options.UseSqlServer(configuration.GetConnectionString("Default")));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+builder.Services.Configure<BuyBookSettings>(configuration.GetSection(nameof(BuyBookSettings)));
+builder.Services.Configure<PasswordSettings>(c =>
+{
+  c.Long=9;  
+});
+
 
 
 
