@@ -46,6 +46,9 @@ public class UsersController(ILogger<UsersController> logger, IUserRepository re
         return Ok(dto);
 
     }
+
+
+    
     [HttpPost]
     public ActionResult Create(CreateUserDto dto)
     {
