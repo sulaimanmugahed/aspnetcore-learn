@@ -7,6 +7,7 @@ using Api.Extensions;
 using Api.Settings;
 using Domain;
 using Domain.Entities;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -14,7 +15,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BooksController(IBookRepository repository, IOptions<BuyBookSettings> options) : ControllerBase
+public class BooksController(IBookRepository repository, ICustomerRepository customerRepository, IBorrowingRepository borrowingRepository, IOptions<BuyBookSettings> options) : ControllerBase
 {
     [HttpGet]
     public List<BookDto> GetAll()
@@ -75,7 +76,52 @@ public class BooksController(IBookRepository repository, IOptions<BuyBookSetting
     {
         return repository.Exist(id);
     }
+    public IActionResult Borrow(BorrowBookDto dto)
+    {
+        var book = repository.Get(dto.BookId);
+        if (book is null)
+        {
+            return NotFound();
+        }
 
+        if (book.Quantity <= 0)
+        {
+            return BadRequest();
+        }
+
+        var customer = customerRepository.Get(dto.CustomerId);
+        if (customer is null)
+        {
+            return NotFound();
+        }
+
+        var borrow = new Borrowing()
+        {
+            BookId = dto.BookId,
+            CustomerId = dto.CustomerId,
+            StartDate = dto.StartDate,
+            EndDate = dto.EndDate
+        };
+
+        borrowingRepository.Create(borrow);
+        return Ok();
+    }
+
+    public ActionResult<List<BorrowingDto>> GetActiveBorrowings()
+    {
+        var borrowings = borrowingRepository.GetAllWhere(x => x.IsActive);
+        var borrowingDtos = borrowings.Select(b => new BorrowingDto()
+        {
+            Id = b.Id,
+            StartDate = b.StartDate,
+            EndDate = b.EndDate,
+            CustomerId = b.CustomerId,
+            BookId = b.BookId,
+            IsActive = b.IsActive
+        }).ToList();
+
+        return Ok(borrowingDtos);
+    }
 
 
 

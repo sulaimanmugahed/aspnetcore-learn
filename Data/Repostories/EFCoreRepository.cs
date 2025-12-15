@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Entities;
@@ -74,6 +75,11 @@ where T : Entity
     public async Task<List<T>> GetAllAsync()
     {
         return await context.Set<T>().ToListAsync();
+    }
+
+    public List<T> GetAllWhere(Expression<Func<T, bool>> criteria)
+    {
+        return context.Set<T>().Where(criteria).ToList();
     }
 
     public async Task<T?> GetAsync(int id)

@@ -18,6 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Customer> Customers { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Borrowing> Borrowings {get;set;}
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,7 +49,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .WithMany(a => a.Books)
             .HasForeignKey(a => a.AuthorId);
         });
+        modelBuilder.Entity<Borrowing>(x =>
+        {
+         x.HasOne(a=>a.Book).WithMany()
+         .HasForeignKey(a=>a.BookId);
+          
+         x.HasOne(a=>a.Customer).WithMany()
+         .HasForeignKey(a=>a.CustomerId);
 
+
+
+
+        });
 
 
     }
