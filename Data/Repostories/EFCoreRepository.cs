@@ -86,4 +86,10 @@ where T : Entity
     {
         return await context.Set<T>().FindAsync(id);
     }
+
+    public bool SaveChange()
+    {
+        return context.SaveChanges() > 0;
+
+    }
 }

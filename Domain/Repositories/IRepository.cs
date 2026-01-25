@@ -22,4 +22,5 @@ where T : Entity
     Task<T?> GetAsync(int id);
     Task DeleteAsync(int id);
     Task CreateAsync(T entity);
+    bool SaveChange();
 }

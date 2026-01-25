@@ -32,13 +32,8 @@ public class CustomerController(ICustomerRepository repository) : ControllerBase
         {
             Id = a.Id.ToString(),
             Balance = a.Balance,
-            Name = a.Name,
-            User = new UserDto
-            {
-                Id = a.UserId,
-                UserName = a.User.UserName
-
-            }
+            Name = a.Name
+     
 
         }).ToList();
         return dto;
@@ -50,9 +45,7 @@ public class CustomerController(ICustomerRepository repository) : ControllerBase
         var customer = new Customer()
         {
             Name = dto.Name,
-            Balance = dto.Balance,
-            UserId = dto.UserId
-
+            Balance = dto.Balance
         };
         repository.Create(customer);
     }
@@ -77,12 +70,7 @@ public class CustomerController(ICustomerRepository repository) : ControllerBase
         {
             Id = customer.Id.ToString(),
             Name = customer.Name,
-            Balance = customer.Balance,
-            User = new UserDto()
-            {
-                Id = customer.User.Id,
-                UserName = customer.User.UserName
-            }
+            Balance = customer.Balance
 
         };
         return dto;

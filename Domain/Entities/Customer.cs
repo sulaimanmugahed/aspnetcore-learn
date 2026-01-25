@@ -8,11 +8,6 @@ namespace Domain;
 
 public class Customer:Entity
 {
-
     public string Name { get; set; }
     public int Balance { get; set; }
-    public User User { get; set; }
-    
-    public int UserId { get; set; } 
-
 }

@@ -8,6 +8,7 @@ using Api.Settings;
 using Data;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.Options;
@@ -17,59 +18,91 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController(ILogger<UsersController> logger, IUserRepository repository, IOptions<PasswordSettings> options) : ControllerBase
+public class UsersController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+: ControllerBase
 {
-    [HttpGet]
-    public List<UserDto> GetAll()
+    [HttpDelete]
+    public async Task<IActionResult> Delete(string id)
     {
-        var user = repository.GetAll();
-        var dto = user.Select(user => user.ToDto()).ToList();
-
-        return dto;
-    }
-
-    //error
-    //information
-    //warring
-    [HttpGet("{id}")]
-    public ActionResult<UserDto> Get(int id)
-    {
-        var user = repository.Get(id);
-        if (user is null)
+        var user = await userManager.FindByIdAsync(id);
+        if (user == null)
         {
-            logger.LogError($"no user found with this id: {id}");
             return NotFound();
         }
 
-        var dto = user.ToDto();
-
-        return Ok(dto);
-
-    }
-
-
-    
-    [HttpPost]
-    public ActionResult Create(CreateUserDto dto)
-    {
-        if (dto.Password.Length < options.Value.Long)
+        var result = await userManager.DeleteAsync(user);
+        if (!result.Succeeded)
         {
-            return BadRequest("ggg");
+            return BadRequest("cant delete the user");
         }
-
-        var user = new User()
+        return Ok();
+    }
+    [HttpPost("addrole")]
+    public async Task<IActionResult> AddRole(string userId, string roleName)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
         {
-            Password = dto.Password,
-            UserName = dto.UserName
-
-        };
-        repository.Create(user);
-        logger.LogInformation("new user created with username: {yyy} {jjj}", user.Id, user.UserName);
-
+            return NotFound();
+        }
+        var role = await roleManager.FindByNameAsync(roleName);
+        if (role is null)
+        {
+            return NotFound();
+        }
+        var result = await userManager.AddToRoleAsync(user, roleName);
+        if (!result.Succeeded)
+        {
+            return BadRequest();
+        }
         return Ok();
 
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateUserDto dto)
+    {
+        var user = new IdentityUser
+        {
+            UserName = dto.UserName,
+            Email = dto.Email
+        };
+
+        var result = await userManager.CreateAsync(user, dto.Password);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest("cant create the user");
+        }
+        return Ok(user.Id);
+    }
+
+
+    [HttpGet]
+    public List<IdentityUser> GetAll()
+    {
+        var users = userManager.Users.ToList();
+        return users;
+    }
+    [HttpGet("roles/{id}")]
+    public async Task<IActionResult?> GetRoles(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        var roles = await userManager.GetRolesAsync(user);
+        return Ok(roles);
+
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IdentityUser?> Get(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        return user;
+    }
 }
 
 

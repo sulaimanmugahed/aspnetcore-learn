@@ -76,6 +76,28 @@ public class BooksController(IBookRepository repository, ICustomerRepository cus
     {
         return repository.Exist(id);
     }
+
+    //Return
+    [HttpPost("return/{id}")]
+    public IActionResult Return(int id)
+    {
+        var borrowing = borrowingRepository.Get(id);
+        if (borrowing is null)
+        {
+            return NotFound();
+        }
+        var book = repository.Get(borrowing.BookId);
+        book?.IncreaseQuantity(1);
+        borrowing.Returned = true;
+        borrowingRepository.SaveChange();
+
+        return Ok();
+
+
+
+    }
+
+    [HttpPost("borrow")]
     public IActionResult Borrow(BorrowBookDto dto)
     {
         var book = repository.Get(dto.BookId);
@@ -104,12 +126,15 @@ public class BooksController(IBookRepository repository, ICustomerRepository cus
         };
 
         borrowingRepository.Create(borrow);
+        book.DecreaseQuantity(1);
+        borrowingRepository.SaveChange();
         return Ok();
     }
 
+    [HttpGet(nameof(GetActiveBorrowings))]
     public ActionResult<List<BorrowingDto>> GetActiveBorrowings()
     {
-        var borrowings = borrowingRepository.GetAllWhere(x => x.IsActive);
+        var borrowings = borrowingRepository.GetAllWhere(x => DateTime.UtcNow > x.StartDate && DateTime.UtcNow < x.EndDate);
         var borrowingDtos = borrowings.Select(b => new BorrowingDto()
         {
             Id = b.Id,
@@ -117,7 +142,8 @@ public class BooksController(IBookRepository repository, ICustomerRepository cus
             EndDate = b.EndDate,
             CustomerId = b.CustomerId,
             BookId = b.BookId,
-            IsActive = b.IsActive
+            IsActive = b.IsActive,
+            Returned = b.Returned
         }).ToList();
 
         return Ok(borrowingDtos);

@@ -13,5 +13,6 @@ public class Borrowing : Entity
     public int BookId { get; set; }
     public bool IsActive => DateTime.UtcNow > StartDate && DateTime.UtcNow < EndDate;
     public Book Book { get; set; }
+    public bool Returned { get; set; }
     public Customer Customer { get; set; }
 }

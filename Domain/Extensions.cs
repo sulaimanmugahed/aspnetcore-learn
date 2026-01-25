@@ -16,4 +16,9 @@ public static class Extensions
         entity.Quantity -= quantity;
 
     }
+        public static void IncreaseQuantity(this IHasQuantity entity, int quantity)
+    {
+        entity.Quantity += quantity;
+
+    }
 }

@@ -13,4 +13,6 @@ public class BorrowingDto
     public int CustomerId { get; set; }
     public int BookId { get; set; }
     public bool IsActive { get; set; }
+    public bool Returned { get; set; }
+
 }

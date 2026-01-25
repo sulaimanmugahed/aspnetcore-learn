@@ -1,24 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain;
 using Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
- : DbContext(options)
+ : IdentityDbContext(options)
 {
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; }
     public DbSet<Pen> Pens { get; set; }
     public DbSet<Customer> Customers { get; set; }
-    public DbSet<User> Users { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<Borrowing> Borrowings {get;set;}
+    public DbSet<Borrowing> Borrowings { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,12 +26,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .WithMany(a => a.Books)
             .HasForeignKey(e => e.CategoryId);
         });
-        modelBuilder.Entity<Customer>(a =>
-        {
-            a.HasOne(a => a.User)
-            .WithOne()
-            .HasForeignKey<Customer>(c => c.UserId);
-        });
+
 
         modelBuilder.Entity<BookAuthor>(x =>
         {
@@ -51,11 +41,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         });
         modelBuilder.Entity<Borrowing>(x =>
         {
-         x.HasOne(a=>a.Book).WithMany()
-         .HasForeignKey(a=>a.BookId);
-          
-         x.HasOne(a=>a.Customer).WithMany()
-         .HasForeignKey(a=>a.CustomerId);
+            x.HasOne(a => a.Book).WithMany()
+            .HasForeignKey(a => a.BookId);
+
+            x.HasOne(a => a.Customer).WithMany()
+            .HasForeignKey(a => a.CustomerId);
 
 
 
